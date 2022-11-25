@@ -10,62 +10,61 @@ namespace canned_food
     {
         static void Main(string[] args)
         {
-            Storage storage = new Storage(new CannedFood[]
+            Storage storage = new Storage(new CanOfStew[]
             {
-                new CannedFood("ГОСТ", 2000, 20),
-                new CannedFood("Коровка", 2019, 5),
-                new CannedFood("ГОСТ", 1964, 15),
-                new CannedFood("Потемки", 2004, 20),
-                new CannedFood("ГОСТ", 2005, 18),
-                new CannedFood("Потемки", 2007, 3),
-                new CannedFood("Коровка", 2015, 6),
-                new CannedFood("Тушенка - карамель", 2019, 3),
+                new CanOfStew("ГОСТ", 2000, 20),
+                new CanOfStew("Коровка", 2019, 5),
+                new CanOfStew("ГОСТ", 1964, 15),
+                new CanOfStew("Потемки", 2004, 20),
+                new CanOfStew("ГОСТ", 2005, 18),
+                new CanOfStew("Потемки", 2007, 3),
+                new CanOfStew("Коровка", 2015, 6),
+                new CanOfStew("Тушенка - карамель", 2019, 3),
             });
-            CannedFood[] BuiltCannedFood = storage.GetBuilt(2022);
 
-            storage.ShowInfo();
-
-            Console.WriteLine();
-
-            foreach (var cannedFood in BuiltCannedFood)
-            {
-                Console.WriteLine($"{cannedFood.Name}, Дата изготовления: {cannedFood.YearOfIssue} год, срок годности: {cannedFood.BestBeforeDate} лет - просрочено");
-            }
-
+            storage.ShowAllCansOfStew();
+            Console.WriteLine("\nПросроченные: ");
+            storage.ShowOverdueCansOfStew();
             Console.ReadKey();
         }
     }
 
     class Storage
     {
-        private CannedFood[] _storage;
+        private CanOfStew[] _cansOfStew;
+        private CanOfStew[] _overdueCansOfStew;
 
-        public Storage(CannedFood[] storage)
+        public Storage(CanOfStew[] cansOfStew)
         {
-            _storage = storage;
+            int currentYear = 2022;
+            _cansOfStew = cansOfStew;
+            _overdueCansOfStew = _cansOfStew.Where(cannedFood => cannedFood.YearOfIssue + cannedFood.BestBeforeDate < currentYear).ToArray();
         }
 
-        public CannedFood[] GetBuilt(int nowYear)
+        public void ShowAllCansOfStew()
         {
-            return _storage.Where(cannedFood => cannedFood.YearOfIssue + cannedFood.BestBeforeDate < nowYear).ToArray();
-        }
-
-        public void ShowInfo()
-        {
-            foreach (var cannedFood in _storage)
+            foreach (var cannedFood in _cansOfStew)
             {
                 Console.WriteLine($"{cannedFood.Name}, Дата изготовления: {cannedFood.YearOfIssue} год, срок годности: {cannedFood.BestBeforeDate} лет");
             }
         }
+
+        public void ShowOverdueCansOfStew()
+        {
+            foreach (var cannedFood in _overdueCansOfStew)
+            {
+                Console.WriteLine($"{cannedFood.Name}, Дата изготовления: {cannedFood.YearOfIssue} год, срок годности: {cannedFood.BestBeforeDate} лет - просрочена");
+            }
+        }
     }
 
-    class CannedFood
+    class CanOfStew
     {
         public string Name { get; private set; }
         public int YearOfIssue { get; private set; }
         public int BestBeforeDate { get; private set; }
 
-        public CannedFood(string name, int yearOfIssue, int bestBeforeDate)
+        public CanOfStew(string name, int yearOfIssue, int bestBeforeDate)
         {
             Name = name;
             YearOfIssue = yearOfIssue;
